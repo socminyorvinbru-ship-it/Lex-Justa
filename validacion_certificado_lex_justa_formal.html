@@ -1,402 +1,448 @@
-<!DOCTYPE html>
+from pathlib import Path
+# Crear una versión formal con el código 126-2025 y logo incrustado.
+# Usaremos como logo el emblema disponible dentro del certificado adjunto, recortándolo del certificado original.
+
+from PIL import Image
+import base64, io, os, textwrap
+
+cert_path = Path("/mnt/data/20369.jpg")
+img = Image.open(cert_path).convert("RGBA")
+
+# Recorte aproximado del logo circular en la esquina superior izquierda del certificado nuevo.
+# Coordenadas basadas en la imagen adjunta del certificado.
+logo_crop = img.crop((70, 45, 385, 365))
+logo_path = Path("/mnt/data/logo_lex_justa.png")
+logo_crop.save(logo_path)
+
+# Convertir logo a base64 para que GitHub Pages no dependa de archivos aparte.
+with open(logo_path, "rb") as f:
+    logo_b64 = base64.b64encode(f.read()).decode("utf-8")
+
+html = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Validación de Certificado | Lex Justa</title>
   <style>
-    :root {
-      --navy: #0f2348;
-      --gold: #b58a2f;
-      --gold-soft: #d3b36a;
-      --bg: #f4f6fa;
-      --text: #1f2430;
-      --muted: #5d6778;
-      --border: #d9dee8;
-      --valid-bg: #edf8f0;
-      --valid-border: #4a9c65;
-      --invalid-bg: #fff3f1;
-      --invalid-border: #b5534c;
-      --shadow: 0 18px 45px rgba(12, 24, 49, 0.12);
-    }
+    :root {{
+      --azul: #0b1f44;
+      --azul2: #132f63;
+      --dorado: #b8892f;
+      --dorado2: #d4b36a;
+      --fondo: #f3f5f9;
+      --texto: #1f2633;
+      --gris: #667085;
+      --borde: #d9dee8;
+      --verde: #1f7a3f;
+      --rojo: #9b2c25;
+    }}
 
-    * { box-sizing: border-box; }
+    * {{
+      box-sizing: border-box;
+    }}
 
-    body {
+    body {{
       margin: 0;
-      font-family: "Georgia", "Times New Roman", serif;
-      background: linear-gradient(180deg, #eef2f8 0%, #f7f8fb 100%);
-      color: var(--text);
-    }
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef2f7 0%, #f8f9fc 100%);
+      color: var(--texto);
+    }}
 
-    .topbar {
-      height: 8px;
-      background: linear-gradient(90deg, var(--gold) 0%, var(--navy) 55%, var(--gold) 100%);
-    }
+    .barra {{
+      height: 9px;
+      background: linear-gradient(90deg, var(--dorado), var(--azul), var(--dorado));
+    }}
 
-    .page {
-      min-height: calc(100vh - 8px);
+    .contenedor {{
+      min-height: calc(100vh - 9px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 34px 18px;
-    }
+      padding: 32px 16px;
+    }}
 
-    .card {
+    .tarjeta {{
       width: 100%;
-      max-width: 930px;
-      background: #fff;
-      border: 1px solid #e6e9f0;
+      max-width: 980px;
+      background: #ffffff;
+      border: 1px solid #e4e7ef;
       border-radius: 18px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 18px 45px rgba(10, 24, 50, 0.14);
       overflow: hidden;
-    }
+    }}
 
-    .header {
-      padding: 34px 34px 24px;
-      border-bottom: 1px solid #edf0f5;
-      background:
-        radial-gradient(circle at top right, rgba(181,138,47,0.10), transparent 28%),
-        linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+    .encabezado {{
       text-align: center;
-    }
+      padding: 34px 28px 26px;
+      background:
+        radial-gradient(circle at top right, rgba(184, 137, 47, 0.12), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+      border-bottom: 1px solid #e9edf5;
+    }}
 
-    .seal {
-      width: 76px;
-      height: 76px;
+    .logo {{
+      width: 108px;
+      height: 108px;
+      object-fit: contain;
       margin: 0 auto 14px;
+      display: block;
       border-radius: 50%;
-      border: 3px solid var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--navy);
-      font-size: 31px;
-      line-height: 1;
-      background: radial-gradient(circle at 30% 30%, #fff8e8 0%, #f5e3b4 45%, #ecd39b 100%);
-      box-shadow: inset 0 0 0 3px rgba(255,255,255,0.65);
-    }
+      filter: drop-shadow(0 8px 12px rgba(11, 31, 68, 0.15));
+    }}
 
-    .org {
-      font-size: 15px;
-      letter-spacing: 1.7px;
+    .institucion {{
+      color: var(--azul);
+      font-weight: 700;
       text-transform: uppercase;
-      color: var(--navy);
-      font-weight: 700;
+      letter-spacing: 1.6px;
+      font-size: 15px;
       margin-bottom: 8px;
-    }
+    }}
 
-    h1 {
+    h1 {{
       margin: 0;
-      color: var(--navy);
-      font-size: clamp(28px, 4vw, 42px);
-      letter-spacing: 1px;
-      font-weight: 700;
-    }
+      color: var(--azul);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 44px);
+      letter-spacing: 0.6px;
+    }}
 
-    .subtitle {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 16px;
+    .subtitulo {{
+      max-width: 760px;
+      margin: 12px auto 0;
+      color: var(--gris);
       line-height: 1.6;
-    }
+      font-size: 16px;
+    }}
 
-    .content {
-      padding: 30px 34px 34px;
+    .contenido {{
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 28px;
-    }
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 26px;
+      padding: 30px;
+    }}
 
-    .panel {
-      border: 1px solid var(--border);
+    .panel {{
+      border: 1px solid var(--borde);
       border-radius: 16px;
       padding: 24px;
-      background: #fff;
-    }
+      background: #ffffff;
+    }}
 
-    .panel h2 {
+    .panel h2 {{
       margin: 0 0 14px;
-      color: var(--navy);
+      color: var(--azul);
       font-size: 22px;
-      font-weight: 700;
-    }
+    }}
 
-    .panel p, .panel li {
-      color: var(--muted);
-      font-size: 15px;
+    .panel p,
+    .panel li {{
+      color: var(--gris);
       line-height: 1.65;
-      margin: 0;
-    }
+      font-size: 15px;
+    }}
 
-    .instructions {
-      padding-left: 18px;
-      margin: 0;
-    }
-
-    .instructions li + li { margin-top: 10px; }
-
-    .label {
+    label {{
       display: block;
-      font-size: 14px;
-      color: var(--navy);
       margin-bottom: 10px;
+      color: var(--azul);
       font-weight: 700;
-      letter-spacing: 0.2px;
-    }
+      font-size: 14px;
+    }}
 
-    .input-row {
+    .fila {{
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-    }
+    }}
 
-    input[type="text"] {
-      flex: 1 1 280px;
-      min-width: 0;
+    input {{
+      flex: 1 1 260px;
       padding: 15px 16px;
-      border-radius: 12px;
       border: 1px solid #cfd6e2;
+      border-radius: 12px;
       font-size: 16px;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #132238;
       outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease;
       text-transform: uppercase;
-    }
+    }}
 
-    input[type="text"]:focus {
-      border-color: var(--navy);
-      box-shadow: 0 0 0 4px rgba(15,35,72,0.08);
-    }
+    input:focus {{
+      border-color: var(--azul);
+      box-shadow: 0 0 0 4px rgba(11, 31, 68, 0.08);
+    }}
 
-    button {
-      padding: 14px 24px;
+    button {{
+      min-width: 150px;
       border: none;
       border-radius: 12px;
-      background: linear-gradient(180deg, #15315f 0%, #0f2348 100%);
-      color: #fff;
-      font-size: 15px;
+      background: linear-gradient(180deg, var(--azul2), var(--azul));
+      color: #ffffff;
       font-weight: 700;
-      letter-spacing: 0.3px;
+      font-size: 15px;
       cursor: pointer;
-      min-width: 154px;
-      box-shadow: 0 10px 22px rgba(15,35,72,0.18);
-    }
+      padding: 14px 22px;
+      box-shadow: 0 10px 22px rgba(11, 31, 68, 0.18);
+    }}
 
-    button:hover { filter: brightness(1.03); }
+    button:hover {{
+      filter: brightness(1.05);
+    }}
 
-    .helper {
+    .nota {{
       margin-top: 12px;
       font-size: 13px;
-      color: #6e7889;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+      color: #6b7280;
+    }}
 
-    .result {
-      margin-top: 22px;
+    .resultado {{
       display: none;
+      margin-top: 22px;
       border-radius: 14px;
       padding: 18px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+      line-height: 1.5;
+    }}
 
-    .result.show { display: block; }
+    .resultado.mostrar {{
+      display: block;
+    }}
 
-    .result.valid {
-      background: var(--valid-bg);
-      border: 1px solid var(--valid-border);
-    }
+    .valido {{
+      background: #eefaf2;
+      border: 1px solid #62a877;
+    }}
 
-    .result.invalid {
-      background: var(--invalid-bg);
-      border: 1px solid var(--invalid-border);
-    }
+    .invalido {{
+      background: #fff2f0;
+      border: 1px solid #c46a62;
+    }}
 
-    .status {
+    .estado {{
       font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #16311f;
-    }
+      font-weight: 800;
+      margin-bottom: 8px;
+    }}
 
-    .invalid .status { color: #6c1f1a; }
+    .valido .estado {{
+      color: var(--verde);
+    }}
 
-    .details {
+    .invalido .estado {{
+      color: var(--rojo);
+    }}
+
+    .datos {{
+      margin-top: 14px;
       display: grid;
-      grid-template-columns: 1fr;
       gap: 10px;
-      margin-top: 12px;
-    }
+    }}
 
-    .detail-item {
+    .dato {{
       display: grid;
-      grid-template-columns: 170px 1fr;
+      grid-template-columns: 175px 1fr;
       gap: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px dashed rgba(15,35,72,0.12);
-    }
+      padding-bottom: 9px;
+      border-bottom: 1px dashed rgba(11, 31, 68, 0.15);
+    }}
 
-    .detail-item:last-child {
+    .dato:last-child {{
       border-bottom: none;
       padding-bottom: 0;
-    }
+    }}
 
-    .detail-label {
-      color: #354156;
+    .etiqueta {{
       font-weight: 700;
-    }
+      color: #334155;
+    }}
 
-    .detail-value {
-      color: #1b2432;
-    }
+    .valor {{
+      color: #111827;
+    }}
 
-    .footer {
-      padding: 0 34px 30px;
+    .lista {{
+      margin: 0;
+      padding-left: 20px;
+    }}
+
+    .pie {{
+      padding: 0 30px 30px;
+      color: #667085;
+      font-size: 13px;
       display: flex;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
-      color: #677082;
-      font-size: 13px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+    }}
 
-    .footer a {
-      color: var(--navy);
-      text-decoration: none;
+    .pie a {{
+      color: var(--azul);
       font-weight: 700;
-    }
+      text-decoration: none;
+    }}
 
-    @media (max-width: 760px) {
-      .content {
+    @media (max-width: 760px) {{
+      .contenido {{
         grid-template-columns: 1fr;
-        padding: 24px 18px;
-      }
-      .header { padding: 28px 20px 20px; }
-      .panel { padding: 20px; }
-      .footer { padding: 0 18px 24px; }
-      .detail-item { grid-template-columns: 1fr; gap: 4px; }
-      button { width: 100%; }
-    }
+        padding: 22px 16px;
+      }}
+
+      .encabezado {{
+        padding: 28px 18px 22px;
+      }}
+
+      .panel {{
+        padding: 20px;
+      }}
+
+      .dato {{
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }}
+
+      button {{
+        width: 100%;
+      }}
+
+      .pie {{
+        padding: 0 16px 24px;
+      }}
+    }}
   </style>
 </head>
 <body>
-  <div class="topbar"></div>
-  <div class="page">
-    <main class="card">
-      <section class="header">
-        <div class="seal">⚖</div>
-        <div class="org">Lex Justa - Asociación Jurídica</div>
-        <h1>Validación de Certificados</h1>
-        <p class="subtitle">
-          Plataforma de consulta para verificar la autenticidad de certificados emitidos por la institución.
-        </p>
-      </section>
+  <div class="barra"></div>
 
-      <section class="content">
+  <main class="contenedor">
+    <section class="tarjeta">
+      <header class="encabezado">
+        <img class="logo" src="data:image/png;base64,{logo_b64}" alt="Logo de Lex Justa">
+        <div class="institucion">Lex Justa - Asociación Jurídica</div>
+        <h1>Validación de Certificados</h1>
+        <p class="subtitulo">
+          Sistema institucional de consulta para verificar la autenticidad de certificados emitidos por Lex Justa - Asociación Jurídica.
+        </p>
+      </header>
+
+      <section class="contenido">
         <article class="panel">
           <h2>Consulta de autenticidad</h2>
-          <label class="label" for="codigo">Ingrese el código del certificado</label>
-          <div class="input-row">
-            <input id="codigo" type="text" placeholder="Ejemplo: CERT-2026-001" autocomplete="off" />
-            <button type="button" onclick="validarCertificado()">Validar código</button>
-          </div>
-          <div class="helper">Solo los certificados registrados mostrarán información oficial de verificación.</div>
 
-          <div id="resultado" class="result" aria-live="polite"></div>
+          <label for="codigo">Ingrese el código del certificado</label>
+          <div class="fila">
+            <input id="codigo" type="text" placeholder="Ejemplo: 126-2025" autocomplete="off">
+            <button type="button" onclick="validarCertificado()">Validar</button>
+          </div>
+
+          <div class="nota">
+            Código autorizado para este certificado: <strong>126-2025</strong>.
+          </div>
+
+          <div id="resultado" class="resultado" aria-live="polite"></div>
         </article>
 
         <aside class="panel">
           <h2>Indicaciones</h2>
-          <ol class="instructions">
-            <li>Escriba el código completo del certificado en el campo de validación.</li>
-            <li>Seleccione el botón <strong>“Validar código”</strong> para iniciar la consulta.</li>
-            <li>Si el código es auténtico y está registrado, el sistema mostrará los datos del titular.</li>
-            <li>Si el código no existe o no corresponde al registro, el resultado aparecerá como <strong>inválido</strong>.</li>
+          <ol class="lista">
+            <li>Ingrese el código completo del certificado.</li>
+            <li>Presione el botón <strong>Validar</strong>.</li>
+            <li>Si el certificado está registrado, se mostrarán los datos del titular y del programa académico.</li>
+            <li>Si el código no corresponde al registro, el sistema mostrará el certificado como inválido.</li>
           </ol>
         </aside>
       </section>
 
-      <div class="footer">
-        <div>Registro institucional de verificación documental.</div>
-        <div>Página oficial: <a href="https://www.facebook.com/share/1GmrUH5KiE/" target="_blank" rel="noopener noreferrer">Lex Justa - Facebook</a></div>
-      </div>
-    </main>
-  </div>
+      <footer class="pie">
+        <span>Registro institucional de verificación documental.</span>
+        <span>Página oficial: <a href="https://www.facebook.com/share/1GmrUH5KiE/" target="_blank" rel="noopener noreferrer">Lex Justa - Facebook</a></span>
+      </footer>
+    </section>
+  </main>
 
   <script>
-    const certificadoRegistrado = {
-      codigo: 'CERT-2026-001',
-      numeroCertificado: '126-2025',
-      titular: 'Yorvin Bruce Saldaña Ocmin',
-      dni: '75879142',
-      curso: 'Ley de Procedimiento Administrativo General - Ley N.º 27444; Derecho Administrativo & Derecho Constitucional',
-      condicion: 'Asistente',
-      horas: '90 horas académicas',
-      nota: 'Dieciocho (18)',
-      fechas: 'Del sábado 04 de octubre de 2025 al domingo 02 de noviembre de 2025',
-      emision: '15 de noviembre de 2025',
-      institucion: 'Lex Justa - Asociación Jurídica'
-    };
+    const certificado = {{
+      codigo: "126-2025",
+      titular: "Yorvin Bruce Saldaña Ocmin",
+      dni: "75879142",
+      numeroCertificado: "126 del año 2025",
+      institucion: "Lex Justa - Asociación Jurídica",
+      programa: "Ley de Procedimiento Administrativo General - Ley N.° 27444; Derecho Administrativo & Derecho Constitucional",
+      condicion: "Asistente",
+      duracion: "90 horas académicas",
+      nota: "Dieciocho (18)",
+      fechaEvento: "Del sábado 04 de octubre de 2025 al domingo 02 de noviembre de 2025",
+      fechaEmision: "15 de noviembre de 2025"
+    }};
 
-    function escapeHtml(texto) {
+    function limpiarTexto(texto) {{
       return texto
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }}
 
-    function validarCertificado() {
-      const input = document.getElementById('codigo');
-      const resultado = document.getElementById('resultado');
-      const codigoIngresado = input.value.trim().toUpperCase();
-      const codigoValido = certificadoRegistrado.codigo.toUpperCase();
+    function validarCertificado() {{
+      const entrada = document.getElementById("codigo").value.trim().toUpperCase();
+      const resultado = document.getElementById("resultado");
+      const codigoCorrecto = certificado.codigo.toUpperCase();
 
-      if (!codigoIngresado) {
-        resultado.className = 'result show invalid';
+      if (entrada === "") {{
+        resultado.className = "resultado mostrar invalido";
         resultado.innerHTML = `
-          <div class="status">Resultado: código inválido</div>
-          <div>Por favor, ingrese un código de certificado para realizar la validación.</div>
+          <div class="estado">Resultado: código no ingresado</div>
+          <div>Ingrese un código de certificado para realizar la validación.</div>
         `;
         return;
-      }
+      }}
 
-      if (codigoIngresado === codigoValido) {
-        resultado.className = 'result show valid';
+      if (entrada === codigoCorrecto) {{
+        resultado.className = "resultado mostrar valido";
         resultado.innerHTML = `
-          <div class="status">Resultado: certificado válido</div>
-          <div>El código consultado se encuentra registrado en el sistema.</div>
-          <div class="details">
-            <div class="detail-item"><div class="detail-label">Código</div><div class="detail-value">${escapeHtml(certificadoRegistrado.codigo)}</div></div>
-            <div class="detail-item"><div class="detail-label">N.º de certificado</div><div class="detail-value">${escapeHtml(certificadoRegistrado.numeroCertificado)}</div></div>
-            <div class="detail-item"><div class="detail-label">Titular</div><div class="detail-value">${escapeHtml(certificadoRegistrado.titular)}</div></div>
-            <div class="detail-item"><div class="detail-label">DNI</div><div class="detail-value">${escapeHtml(certificadoRegistrado.dni)}</div></div>
-            <div class="detail-item"><div class="detail-label">Programa</div><div class="detail-value">${escapeHtml(certificadoRegistrado.curso)}</div></div>
-            <div class="detail-item"><div class="detail-label">Condición</div><div class="detail-value">${escapeHtml(certificadoRegistrado.condicion)}</div></div>
-            <div class="detail-item"><div class="detail-label">Duración</div><div class="detail-value">${escapeHtml(certificadoRegistrado.horas)}</div></div>
-            <div class="detail-item"><div class="detail-label">Calificación</div><div class="detail-value">${escapeHtml(certificadoRegistrado.nota)}</div></div>
-            <div class="detail-item"><div class="detail-label">Fechas del evento</div><div class="detail-value">${escapeHtml(certificadoRegistrado.fechas)}</div></div>
-            <div class="detail-item"><div class="detail-label">Fecha de emisión</div><div class="detail-value">${escapeHtml(certificadoRegistrado.emision)}</div></div>
-            <div class="detail-item"><div class="detail-label">Institución emisora</div><div class="detail-value">${escapeHtml(certificadoRegistrado.institucion)}</div></div>
+          <div class="estado">Resultado: certificado válido</div>
+          <div>El código consultado se encuentra registrado en la base de validación institucional.</div>
+
+          <div class="datos">
+            <div class="dato"><div class="etiqueta">Código</div><div class="valor">${{limpiarTexto(certificado.codigo)}}</div></div>
+            <div class="dato"><div class="etiqueta">N.° de certificado</div><div class="valor">${{limpiarTexto(certificado.numeroCertificado)}}</div></div>
+            <div class="dato"><div class="etiqueta">Titular</div><div class="valor">${{limpiarTexto(certificado.titular)}}</div></div>
+            <div class="dato"><div class="etiqueta">DNI</div><div class="valor">${{limpiarTexto(certificado.dni)}}</div></div>
+            <div class="dato"><div class="etiqueta">Programa</div><div class="valor">${{limpiarTexto(certificado.programa)}}</div></div>
+            <div class="dato"><div class="etiqueta">Condición</div><div class="valor">${{limpiarTexto(certificado.condicion)}}</div></div>
+            <div class="dato"><div class="etiqueta">Duración</div><div class="valor">${{limpiarTexto(certificado.duracion)}}</div></div>
+            <div class="dato"><div class="etiqueta">Calificación</div><div class="valor">${{limpiarTexto(certificado.nota)}}</div></div>
+            <div class="dato"><div class="etiqueta">Fecha del evento</div><div class="valor">${{limpiarTexto(certificado.fechaEvento)}}</div></div>
+            <div class="dato"><div class="etiqueta">Fecha de emisión</div><div class="valor">${{limpiarTexto(certificado.fechaEmision)}}</div></div>
+            <div class="dato"><div class="etiqueta">Entidad emisora</div><div class="valor">${{limpiarTexto(certificado.institucion)}}</div></div>
           </div>
         `;
-      } else {
-        resultado.className = 'result show invalid';
+      }} else {{
+        resultado.className = "resultado mostrar invalido";
         resultado.innerHTML = `
-          <div class="status">Resultado: certificado inválido</div>
-          <div>El código ingresado no corresponde a ningún certificado registrado en esta plataforma.</div>
+          <div class="estado">Resultado: certificado inválido</div>
+          <div>El código ingresado no corresponde a un certificado registrado en esta plataforma.</div>
         `;
-      }
-    }
+      }}
+    }}
 
-    document.getElementById('codigo').addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
+    document.getElementById("codigo").addEventListener("keydown", function(event) {{
+      if (event.key === "Enter") {{
         validarCertificado();
-      }
-    });
+      }}
+    }});
   </script>
 </body>
 </html>
+"""
+
+out = Path("/mnt/data/index.html")
+out.write_text(html, encoding="utf-8")
+
+# También guardamos una copia con nombre descriptivo
+copy = Path("/mnt/data/validacion_lex_justa_codigo_126_2025.html")
+copy.write_text(html, encoding="utf-8")
+
+print("Archivos creados:")
+print(out)
+print(copy)
+print(logo_path)
