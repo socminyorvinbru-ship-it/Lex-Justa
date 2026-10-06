@@ -352,19 +352,34 @@
   </main>
 
   <script>
-    const certificado = {
-      codigo: "LJ-LPAG-126-2025",
-      titular: "Yorvin Bruce Saldaña Ocmin",
-      dni: "75879142",
-      numeroCertificado: "126 del año 2025",
-      institucion: "Lex Justa - Asociación Jurídica",
-      programa: "Ley de Procedimiento Administrativo General - Ley N.° 27444",
-      condicion: "Asistente",
-      duracion: "90 horas académicas",
-      nota: "Dieciocho (18)",
-      fechaEvento: "Del sábado 04 de octubre de 2025 al domingo 02 de noviembre de 2025",
-      fechaEmision: "15 de noviembre de 2025"
-    };
+    const certificados = [
+      {
+        codigo: "LJ-DCPC-423-2026",
+        titular: "Yorvin Bruce Saldaña Ocmin",
+        dni: "75879142",
+        numeroCertificado: "423 del año 2026",
+        institucion: "Lex Justa - Asociación Jurídica",
+        programa: "Derecho Civil y Procesal Civil",
+        condicion: "Asistente",
+        duracion: "90 horas académicas",
+        nota: "Dieciocho (18)",
+        fechaEvento: "Del 02 de junio de 2026 al 13 de junio de 2026",
+        fechaEmision: "20 de junio de 2026"
+      },
+      {
+        codigo: "LJ-DF-424-2026",
+        titular: "Yorvin Bruce Saldaña Ocmin",
+        dni: "75879142",
+        numeroCertificado: "424 del año 2026",
+        institucion: "Lex Justa - Asociación Jurídica",
+        programa: "Derecho de Familia",
+        condicion: "Asistente",
+        duracion: "90 horas académicas",
+        nota: "Dieciocho (18)",
+        fechaEvento: "Del sábado 04 de octubre de 2026 al domingo 02 de noviembre de 2026",
+        fechaEmision: "15 de noviembre de 2026"
+      }
+    ];
 
     function limpiarTexto(texto) {
       return texto
@@ -378,7 +393,7 @@
     function validarCertificado() {
       const entrada = document.getElementById("codigo").value.trim().toUpperCase();
       const resultado = document.getElementById("resultado");
-      const codigoCorrecto = certificado.codigo.toUpperCase();
+      const certificado = certificados.find(item => item.codigo.toUpperCase() === entrada);
 
       if (entrada === "") {
         resultado.className = "resultado mostrar invalido";
@@ -389,7 +404,7 @@
         return;
       }
 
-      if (entrada === codigoCorrecto) {
+      if (certificado) {
         resultado.className = "resultado mostrar valido";
         resultado.innerHTML = `
           <div class="estado">Resultado: certificado válido</div>
